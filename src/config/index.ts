@@ -14,5 +14,5 @@
  * const config = loadConfig('./custom-config.json');
  */
 
-export * from "./schema.js";
 export * from "./loader.js";
+export * from "./schema.js";

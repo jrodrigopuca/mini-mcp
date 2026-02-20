@@ -81,13 +81,7 @@ export const BLOCKED_PATH_PATTERNS = [
  *
  * @constant {readonly string[]}
  */
-export const ALLOWED_EXTENSIONS = [
-	".csv",
-	".tsv",
-	".json",
-	".parquet",
-	".txt",
-] as const;
+export const ALLOWED_EXTENSIONS = [".csv", ".tsv", ".json", ".parquet", ".txt"] as const;
 
 // ============================================================================
 // 🔴 ABSOLUTE LIMITS

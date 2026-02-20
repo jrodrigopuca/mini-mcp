@@ -14,14 +14,11 @@
  * 6. Return formatted data
  */
 
-import type { ExportFormat } from "../types/index.js";
-import { getStore } from "../store/duckdb-store.js";
+import { exportData, getSupportedExportFormats } from "../exporters/exporter-factory.js";
+import { canWriteFiles, writeExport } from "../exporters/file-writer.js";
 import { validateQuery } from "../security/validator.js";
-import {
-	exportData,
-	getSupportedExportFormats,
-} from "../exporters/exporter-factory.js";
-import { writeExport, canWriteFiles } from "../exporters/file-writer.js";
+import { getStore } from "../store/duckdb-store.js";
+import type { ExportFormat } from "../types/index.js";
 
 /**
  * Arguments for the export_data tool.
@@ -89,18 +86,14 @@ function isSQLQuery(source: string): boolean {
  *   outputPath: './exports/sales.csv'
  * });
  */
-export async function exportDataTool(
-	args: ExportDataArgs,
-): Promise<ExportDataResult> {
+export async function exportDataTool(args: ExportDataArgs): Promise<ExportDataResult> {
 	const { source, format, outputPath } = args;
 	const store = getStore();
 
 	// Validate format
 	const supportedFormats = getSupportedExportFormats();
 	if (!supportedFormats.includes(format)) {
-		throw new Error(
-			`Unsupported format '${format}'. Supported: ${supportedFormats.join(", ")}`,
-		);
+		throw new Error(`Unsupported format '${format}'. Supported: ${supportedFormats.join(", ")}`);
 	}
 
 	// Build query

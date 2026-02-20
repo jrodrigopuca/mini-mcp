@@ -39,10 +39,7 @@ interface ChartData {
  * // Marketing   │ ████████████████████ 75
  * // Engineering │ ████████████████████████████████████████ 150
  */
-export function asciiBarChart(
-	data: ChartData,
-	options: { maxWidth?: number } = {},
-): string {
+export function asciiBarChart(data: ChartData, options: { maxWidth?: number } = {}): string {
 	const { labels, values } = data;
 	const maxWidth = options.maxWidth ?? 40;
 	const maxValue = Math.max(...values);
@@ -138,8 +135,6 @@ export function asciiLineChart(data: ChartData): string {
 	return [
 		`Min: ${min} | Max: ${max}`,
 		sparkline,
-		labels.length <= 10
-			? labels.join(" ")
-			: `${labels[0]} ... ${labels[labels.length - 1]}`,
+		labels.length <= 10 ? labels.join(" ") : `${labels[0]} ... ${labels[labels.length - 1]}`,
 	].join("\n");
 }

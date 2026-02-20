@@ -10,8 +10,8 @@
  * - Sample data rows
  */
 
-import { getStore } from "../store/duckdb-store.js";
 import { exportToMarkdown } from "../exporters/markdown-exporter.js";
+import { getStore } from "../store/duckdb-store.js";
 
 /**
  * Arguments for the describe_data tool.
@@ -81,9 +81,7 @@ function formatColumnStats(
  * // result.statistics contains min, max, mean, etc.
  * // result.sampleData contains first few rows
  */
-export async function describeData(
-	args: DescribeDataArgs,
-): Promise<DescribeDataResult> {
+export async function describeData(args: DescribeDataArgs): Promise<DescribeDataResult> {
 	const store = getStore();
 	const { tableName, column } = args;
 
@@ -92,9 +90,7 @@ export async function describeData(
 	const tableMeta = metadata.get(tableName);
 	if (!tableMeta) {
 		const available = Array.from(metadata.keys()).join(", ") || "none";
-		throw new Error(
-			`Table '${tableName}' not found. Available tables: ${available}`,
-		);
+		throw new Error(`Table '${tableName}' not found. Available tables: ${available}`);
 	}
 
 	// Get table statistics

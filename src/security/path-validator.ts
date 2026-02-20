@@ -5,11 +5,11 @@
  * Used by file-writer to ensure exports go to safe locations.
  */
 
-import { resolve, dirname } from "path";
 import { existsSync } from "fs";
+import { dirname, resolve } from "path";
 import { getConfig } from "../config/loader.js";
-import { BLOCKED_PATH_PATTERNS } from "./constants.js";
 import type { SecurityCheckResult } from "../types/index.js";
+import { BLOCKED_PATH_PATTERNS } from "./constants.js";
 
 /**
  * Validates an output path for writing exported data.

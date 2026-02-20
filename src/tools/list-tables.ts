@@ -5,8 +5,8 @@
  * Provides a quick overview of available data for querying.
  */
 
-import { getStore } from "../store/duckdb-store.js";
 import { getConfig } from "../config/loader.js";
+import { getStore } from "../store/duckdb-store.js";
 
 /**
  * Result from the list_tables tool.

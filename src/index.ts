@@ -6,19 +6,16 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-	CallToolRequestSchema,
-	ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
 import { getStore } from "./store/duckdb-store.js";
+import { describeData } from "./tools/describe-data.js";
+import { exportDataTool } from "./tools/export-data.js";
+import { listTables } from "./tools/list-tables.js";
 import { loadData } from "./tools/load-data.js";
 import { queryData } from "./tools/query-data.js";
-import { describeData } from "./tools/describe-data.js";
-import { listTables } from "./tools/list-tables.js";
-import { exportDataTool } from "./tools/export-data.js";
 import { visualizeData } from "./tools/visualize-data.js";
-import type { ExportFormat, ChartType, ChartFormat } from "./types/index.js";
+import type { ChartFormat, ChartType, ExportFormat } from "./types/index.js";
 
 // Server instance
 const server = new Server(
@@ -111,8 +108,7 @@ const TOOLS = [
 				},
 				outputPath: {
 					type: "string",
-					description:
-						"Optional file path to write output (requires readOnly: false)",
+					description: "Optional file path to write output (requires readOnly: false)",
 				},
 			},
 			required: ["source", "format"],

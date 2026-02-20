@@ -12,7 +12,9 @@
     "start": "node dist/index.js",
     "dev": "tsc --watch",
     "test": "vitest",
-    "lint": "eslint src/"
+    "lint": "biome lint src/",
+    "format": "biome format --write src/",
+    "check": "biome check --write src/"
   },
   "repository": {
     "type": "git",
@@ -38,11 +40,9 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@biomejs/biome": "^2.4.3",
     "@types/node": "^22.13.0",
-    "eslint": "^9.18.0",
     "typescript": "^5.7.0",
-    "typescript-eslint": "^8.21.0",
     "vitest": "^3.0.0"
   },
   "engines": {

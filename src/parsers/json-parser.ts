@@ -104,9 +104,7 @@ export class JSONParser implements DataParser {
 	 * @throws {Error} If content is not valid JSON or not an array of objects
 	 */
 	async parse(content: string | Buffer): Promise<ParsedData> {
-		const strContent: string = Buffer.isBuffer(content)
-			? content.toString("utf-8")
-			: content;
+		const strContent: string = Buffer.isBuffer(content) ? content.toString("utf-8") : content;
 		const trimmed = strContent.trim();
 
 		if (!trimmed) {
@@ -132,9 +130,7 @@ export class JSONParser implements DataParser {
 					// Single object - wrap in array
 					objects = [parsed];
 				} else {
-					throw new Error(
-						"JSON must be an array of objects or a single object",
-					);
+					throw new Error("JSON must be an array of objects or a single object");
 				}
 			}
 		} catch (e) {

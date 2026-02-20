@@ -5,7 +5,7 @@
  * security configuration (readOnly mode).
  */
 
-import { writeFile, mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import { dirname } from "path";
 import { getConfig } from "../config/loader.js";
 import { validatePath } from "../security/path-validator.js";

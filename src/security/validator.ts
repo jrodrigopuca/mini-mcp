@@ -12,16 +12,16 @@
  * @see {@link ../config/schema.ts} for configurable security options
  */
 
-import { resolve, extname } from "path";
-import { statSync, existsSync } from "fs";
+import { existsSync, statSync } from "fs";
+import { extname, resolve } from "path";
 import { getConfig } from "../config/loader.js";
-import {
-	BLOCKED_SQL_KEYWORDS,
-	BLOCKED_PATH_PATTERNS,
-	ALLOWED_EXTENSIONS,
-	ABSOLUTE_MAX_FILE_SIZE_MB,
-} from "./constants.js";
 import type { SecurityCheckResult } from "../types/index.js";
+import {
+	ABSOLUTE_MAX_FILE_SIZE_MB,
+	ALLOWED_EXTENSIONS,
+	BLOCKED_PATH_PATTERNS,
+	BLOCKED_SQL_KEYWORDS,
+} from "./constants.js";
 
 /**
  * Validates a file path for loading data.
@@ -60,9 +60,7 @@ export function validateFilePath(filePath: string): SecurityCheckResult {
 
 	// 🔴 HARDCODED: Check file extension
 	const ext = extname(filePath).toLowerCase();
-	if (
-		!ALLOWED_EXTENSIONS.includes(ext as (typeof ALLOWED_EXTENSIONS)[number])
-	) {
+	if (!ALLOWED_EXTENSIONS.includes(ext as (typeof ALLOWED_EXTENSIONS)[number])) {
 		return {
 			allowed: false,
 			reason: `File extension '${ext}' not allowed. Allowed: ${ALLOWED_EXTENSIONS.join(", ")}`,
@@ -93,9 +91,7 @@ export function validateFilePath(filePath: string): SecurityCheckResult {
 	// 🟡 CONFIGURABLE: Check network paths
 	if (
 		!config.security.allowNetworkPaths &&
-		(filePath.startsWith("//") ||
-			filePath.startsWith("smb://") ||
-			filePath.startsWith("http"))
+		(filePath.startsWith("//") || filePath.startsWith("smb://") || filePath.startsWith("http"))
 	) {
 		return {
 			allowed: false,

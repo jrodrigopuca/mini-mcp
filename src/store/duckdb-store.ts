@@ -11,15 +11,15 @@
  * - Statistics generation
  */
 
-import { DuckDBInstance, DuckDBConnection } from "@duckdb/node-api";
+import { type DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
 import { getConfig } from "../config/loader.js";
 import type {
-	TableMetadata,
-	QueryResult,
-	TableStats,
 	ColumnInfo,
 	ColumnStats,
 	Config,
+	QueryResult,
+	TableMetadata,
+	TableStats,
 } from "../types/index.js";
 
 /**
@@ -75,9 +75,7 @@ class DuckDBStore {
 			this.connection = await this.instance.connect();
 
 			// Set memory limit via PRAGMA
-			await this.connection.run(
-				`SET memory_limit='${this.config.duckdb.memoryLimitMB}MB'`,
-			);
+			await this.connection.run(`SET memory_limit='${this.config.duckdb.memoryLimitMB}MB'`);
 
 			this.initialized = true;
 			console.error(
@@ -114,9 +112,7 @@ class DuckDBStore {
 	 * @returns {string} Inferred DuckDB type
 	 */
 	private inferType(values: unknown[]): string {
-		const nonNullValues = values.filter(
-			(v) => v !== null && v !== undefined && v !== "",
-		);
+		const nonNullValues = values.filter((v) => v !== null && v !== undefined && v !== "");
 
 		if (nonNullValues.length === 0) {
 			return "VARCHAR";
@@ -125,12 +121,7 @@ class DuckDBStore {
 		// Check if all values are booleans
 		if (
 			nonNullValues.every(
-				(v) =>
-					typeof v === "boolean" ||
-					v === "true" ||
-					v === "false" ||
-					v === "1" ||
-					v === "0",
+				(v) => typeof v === "boolean" || v === "true" || v === "false" || v === "1" || v === "0",
 			)
 		) {
 			return "BOOLEAN";
@@ -214,9 +205,7 @@ class DuckDBStore {
 			.join(", ");
 
 		// Drop existing table if exists
-		await this.connection!.run(
-			`DROP TABLE IF EXISTS ${this.escapeName(safeName)}`,
-		);
+		await this.connection!.run(`DROP TABLE IF EXISTS ${this.escapeName(safeName)}`);
 
 		// Create table
 		const createSQL = `CREATE TABLE ${this.escapeName(safeName)} (${columnDefs})`;
@@ -234,16 +223,11 @@ class DuckDBStore {
 								return "NULL";
 							}
 							const type = columnTypes[colIdx];
-							if (
-								type === "VARCHAR" ||
-								type === "DATE" ||
-								type === "TIMESTAMP"
-							) {
+							if (type === "VARCHAR" || type === "DATE" || type === "TIMESTAMP") {
 								return `'${String(val).replace(/'/g, "''")}'`;
 							}
 							if (type === "BOOLEAN") {
-								const boolVal =
-									val === true || val === "true" || val === "1" || val === 1;
+								const boolVal = val === true || val === "true" || val === "1" || val === 1;
 								return boolVal ? "TRUE" : "FALSE";
 							}
 							return String(val);
@@ -275,9 +259,7 @@ class DuckDBStore {
 
 		this.tables.set(safeName, metadata);
 
-		console.error(
-			`Table '${safeName}' created: ${rows.length} rows, ${columns.length} columns`,
-		);
+		console.error(`Table '${safeName}' created: ${rows.length} rows, ${columns.length} columns`);
 
 		return metadata;
 	}
@@ -306,11 +288,7 @@ class DuckDBStore {
 		// Create a timeout promise
 		const timeoutPromise = new Promise<never>((_, reject) => {
 			setTimeout(() => {
-				reject(
-					new Error(
-						`Query timed out after ${timeout}ms. Consider simplifying your query.`,
-					),
-				);
+				reject(new Error(`Query timed out after ${timeout}ms. Consider simplifying your query.`));
 			}, timeout);
 		});
 
@@ -478,9 +456,7 @@ class DuckDBStore {
 			return false;
 		}
 
-		await this.connection!.run(
-			`DROP TABLE IF EXISTS ${this.escapeName(tableName)}`,
-		);
+		await this.connection!.run(`DROP TABLE IF EXISTS ${this.escapeName(tableName)}`);
 		this.tables.delete(tableName);
 
 		console.error(`Table '${tableName}' dropped`);

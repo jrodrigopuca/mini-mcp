@@ -5,7 +5,7 @@
  * based on the requested output format.
  */
 
-import type { QueryResult, ExportFormat } from "../types/index.js";
+import type { ExportFormat, QueryResult } from "../types/index.js";
 import { exportToCSV } from "./csv-exporter.js";
 import { exportToJSON } from "./json-exporter.js";
 import { exportToJSONL } from "./jsonl-exporter.js";

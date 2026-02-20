@@ -13,9 +13,9 @@
  * - Mermaid: Markdown-compatible diagrams
  */
 
-import type { ChartType, ChartFormat } from "../types/index.js";
-import { getStore } from "../store/duckdb-store.js";
 import { validateQuery } from "../security/validator.js";
+import { getStore } from "../store/duckdb-store.js";
+import type { ChartFormat, ChartType } from "../types/index.js";
 
 /**
  * Arguments for the visualize_data tool.
@@ -62,11 +62,7 @@ function isSQLQuery(source: string): boolean {
 /**
  * Renders an ASCII horizontal bar chart.
  */
-function renderASCIIBar(
-	labels: string[],
-	values: number[],
-	title?: string,
-): string {
+function renderASCIIBar(labels: string[], values: number[], title?: string): string {
 	const maxValue = Math.max(...values);
 	const maxLabelLen = Math.max(...labels.map((l) => String(l).length));
 	const barWidth = 40;
@@ -110,11 +106,7 @@ function renderASCIIPie(labels: string[], values: number[]): string {
 /**
  * Renders a Mermaid pie chart.
  */
-function renderMermaidPie(
-	labels: string[],
-	values: number[],
-	title?: string,
-): string {
+function renderMermaidPie(labels: string[], values: number[], title?: string): string {
 	const lines: string[] = ["```mermaid"];
 	lines.push("pie showData");
 	if (title) lines.push(`    title ${title}`);
@@ -130,11 +122,7 @@ function renderMermaidPie(
 /**
  * Renders a Mermaid bar chart.
  */
-function renderMermaidBar(
-	labels: string[],
-	values: number[],
-	title?: string,
-): string {
+function renderMermaidBar(labels: string[], values: number[], title?: string): string {
 	const lines: string[] = ["```mermaid"];
 	lines.push("xychart-beta horizontal");
 	if (title) lines.push(`    title "${title}"`);
@@ -166,9 +154,7 @@ function renderMermaidBar(
  *   format: 'mermaid'
  * });
  */
-export async function visualizeData(
-	args: VisualizeDataArgs,
-): Promise<VisualizeDataResult> {
+export async function visualizeData(args: VisualizeDataArgs): Promise<VisualizeDataResult> {
 	const { source, chartType, labelColumn, valueColumn } = args;
 	const format = args.format || "ascii";
 	const store = getStore();
@@ -196,9 +182,7 @@ export async function visualizeData(
 
 	// Need at least 2 columns (label and value)
 	if (result.columns.length < 2) {
-		throw new Error(
-			"Visualization requires at least 2 columns (label and value)",
-		);
+		throw new Error("Visualization requires at least 2 columns (label and value)");
 	}
 
 	// Determine which columns to use
@@ -218,24 +202,17 @@ export async function visualizeData(
 
 	// Check for valid numeric values
 	if (values.some((v) => isNaN(v))) {
-		throw new Error(
-			`Value column '${result.columns[valueIdx]}' must contain numeric data`,
-		);
+		throw new Error(`Value column '${result.columns[valueIdx]}' must contain numeric data`);
 	}
 
 	// Generate chart
 	let chart: string;
 
 	if (format === "ascii") {
-		chart =
-			chartType === "bar"
-				? renderASCIIBar(labels, values)
-				: renderASCIIPie(labels, values);
+		chart = chartType === "bar" ? renderASCIIBar(labels, values) : renderASCIIPie(labels, values);
 	} else {
 		chart =
-			chartType === "bar"
-				? renderMermaidBar(labels, values)
-				: renderMermaidPie(labels, values);
+			chartType === "bar" ? renderMermaidBar(labels, values) : renderMermaidPie(labels, values);
 	}
 
 	return {

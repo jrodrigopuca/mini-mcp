@@ -12,19 +12,15 @@
  * 5. Default values from schema
  */
 
-import { readFileSync, existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
-import { ConfigSchema, type Config } from "./schema.js";
+import { type Config, ConfigSchema } from "./schema.js";
 
 /**
  * List of config filenames to search for, in priority order.
  * @constant {readonly string[]}
  */
-const CONFIG_FILENAMES = [
-	"mini-mcp.config.json",
-	".mini-mcp.json",
-	"mini-mcp.json",
-];
+const CONFIG_FILENAMES = ["mini-mcp.config.json", ".mini-mcp.json", "mini-mcp.json"];
 
 /**
  * Cached configuration singleton.

@@ -13,9 +13,9 @@
  * - visualize_data: Create charts
  */
 
+export * from "./describe-data.js";
+export * from "./export-data.js";
+export * from "./list-tables.js";
 export * from "./load-data.js";
 export * from "./query-data.js";
-export * from "./describe-data.js";
-export * from "./list-tables.js";
-export * from "./export-data.js";
 export * from "./visualize-data.js";

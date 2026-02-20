@@ -42,9 +42,7 @@ export function exportToMarkdown(result: QueryResult): string {
 	const separator = `| ${columns.map(() => "---").join(" | ")} |`;
 
 	// Rows
-	const dataRows = rows.map(
-		(row) => `| ${row.map((cell) => formatCell(cell)).join(" | ")} |`,
-	);
+	const dataRows = rows.map((row) => `| ${row.map((cell) => formatCell(cell)).join(" | ")} |`);
 
 	const table = [header, separator, ...dataRows].join("\n");
 

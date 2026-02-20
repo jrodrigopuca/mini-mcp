@@ -921,16 +921,7 @@ xychart-beta
 - [x] Documentar uso en README
 - [x] Crear configuración para Claude Desktop
 - [x] Crear configuración para VS Code + Copilot
-
-#### ⏳ Pendiente: Vulnerabilidades de ESLint
-
-**Estado:** Esperando release de ESLint (programado 20 Feb 2026)
-
-12 vulnerabilidades en devDependencies (no afectan producción):
-- `minimatch <10.2.1` - ReDoS (CVE-2026-26996) → [#20518](https://github.com/eslint/eslint/issues/20518)
-- `ajv <8.18.0` - ReDoS → [#20508](https://github.com/eslint/eslint/issues/20508)
-
-**Acción:** Ejecutar `npm update eslint` cuando salga ESLint 9.39.3 o 10.0.1
+- [x] Migrar de ESLint a Biome (0 vulnerabilidades)
 
 ---
 
@@ -945,17 +936,15 @@ xychart-beta
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@biomejs/biome": "^2.4.3",
     "@types/node": "^22.13.0",
-    "eslint": "^9.18.0",
     "typescript": "^5.7.0",
-    "typescript-eslint": "^8.21.0",
     "vitest": "^3.0.0"
   }
 }
 ```
 
-**Actualizado:** 20 Feb 2026 - Migrado a ESLint 9 flat config, csv-parse 6, typescript-eslint unificado.`
+**Actualizado:** 20 Feb 2026 - Migrado a Biome (linter + formatter), eliminadas 12 vulnerabilidades de ESLint.`
 
 **Nota sobre DuckDB:**
 
@@ -1076,26 +1065,30 @@ MCP: ✓ Archivo exportado: usuarios.csv (18.3 KB, 200 filas)
 ### Ejemplo 5: Visualización de datos
 
 ````
+
 # Gráfico ASCII de barras
+
 Usuario: "Visualiza ventas por región como barras ASCII"
 MCP:
 Ventas por Región:
 
-Norte   ████████████████████ 45,230 (33%)
-Sur     ████████████████░░░░ 38,120 (28%)
-Centro  █████████████████████████ 52,890 (39%)
-        └──────────────────────────┘
-         0        25k       50k
+Norte ████████████████████ 45,230 (33%)
+Sur ████████████████░░░░ 38,120 (28%)
+Centro █████████████████████████ 52,890 (39%)
+└──────────────────────────┘
+0 25k 50k
 
 # Gráfico Mermaid pie (se renderiza en Claude/VS Code)
+
 Usuario: "Muestra la distribución de ventas como pie chart en Mermaid"
 MCP:
+
 ```mermaid
 pie title Distribución de Ventas por Región
     "Norte" : 45230
     "Sur" : 38120
     "Centro" : 52890
-````
+```
 
 # Histograma ASCII de precios
 

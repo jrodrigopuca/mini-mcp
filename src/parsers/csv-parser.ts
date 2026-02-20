@@ -83,13 +83,8 @@ export class CSVParser implements DataParser {
 	 * @returns {Promise<ParsedData>} Parsed data with columns, rows, and inferred types
 	 * @throws {Error} If parsing fails
 	 */
-	async parse(
-		content: string | Buffer,
-		options: CSVParseOptions = {},
-	): Promise<ParsedData> {
-		const strContent: string = Buffer.isBuffer(content)
-			? content.toString("utf-8")
-			: content;
+	async parse(content: string | Buffer, options: CSVParseOptions = {}): Promise<ParsedData> {
+		const strContent: string = Buffer.isBuffer(content) ? content.toString("utf-8") : content;
 
 		// Detect delimiter if not provided
 		const delimiter = options.delimiter ?? this.detectDelimiter(strContent);

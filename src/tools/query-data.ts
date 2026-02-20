@@ -13,11 +13,11 @@
  * 6. Return formatted output
  */
 
-import { getStore } from "../store/duckdb-store.js";
-import { validateQuery } from "../security/validator.js";
-import { exportToMarkdown } from "../exporters/markdown-exporter.js";
-import type { ExportFormat } from "../types/index.js";
 import { exportData } from "../exporters/exporter-factory.js";
+import { exportToMarkdown } from "../exporters/markdown-exporter.js";
+import { validateQuery } from "../security/validator.js";
+import { getStore } from "../store/duckdb-store.js";
+import type { ExportFormat } from "../types/index.js";
 
 /**
  * Arguments for the query_data tool.
@@ -106,9 +106,7 @@ function translateToSQL(nlQuery: string, tableName: string): string {
 	}
 
 	// "where column = value"
-	const whereMatch = q.match(
-		/where\s+(\w+)\s*(=|>|<|>=|<=|contains)\s*['"]?([^'"]+)['"]?/,
-	);
+	const whereMatch = q.match(/where\s+(\w+)\s*(=|>|<|>=|<=|contains)\s*['"]?([^'"]+)['"]?/);
 	if (whereMatch) {
 		const op = whereMatch[2] === "contains" ? "LIKE" : whereMatch[2];
 		const val =
@@ -173,10 +171,7 @@ export async function queryData(args: QueryDataArgs): Promise<QueryDataResult> {
 	const result = await store.executeQuery(sql);
 
 	// 4. Format output
-	const data =
-		format === "markdown"
-			? exportToMarkdown(result)
-			: exportData(result, format);
+	const data = format === "markdown" ? exportToMarkdown(result) : exportData(result, format);
 
 	return {
 		success: true,

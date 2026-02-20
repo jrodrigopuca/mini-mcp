@@ -35,9 +35,7 @@ export function exportToCSV(result: QueryResult): string {
 	const header = columns.map(escapeCSV).join(",");
 
 	// Rows
-	const dataRows = rows.map((row) =>
-		row.map((cell) => escapeCSV(String(cell ?? ""))).join(","),
-	);
+	const dataRows = rows.map((row) => row.map((cell) => escapeCSV(String(cell ?? ""))).join(","));
 
 	return [header, ...dataRows].join("\n");
 }

@@ -40,11 +40,7 @@ interface NLPattern {
 	/** Regex pattern to match against input */
 	pattern: RegExp;
 	/** Function to generate SQL from regex matches */
-	template: (
-		matches: RegExpMatchArray,
-		table: string,
-		columns: string[],
-	) => string;
+	template: (matches: RegExpMatchArray, table: string, columns: string[]) => string;
 	/** Human-readable description of what this pattern does */
 	description: string;
 }
@@ -73,26 +69,22 @@ const PATTERNS: NLPattern[] = [
 	},
 	{
 		pattern: /^(average|avg|mean)\s+(of\s+)?(.+)$/i,
-		template: (m, table) =>
-			`SELECT AVG(${sanitizeColumn(m[3])}) as average FROM ${table}`,
+		template: (m, table) => `SELECT AVG(${sanitizeColumn(m[3])}) as average FROM ${table}`,
 		description: "Calculate average",
 	},
 	{
 		pattern: /^(sum|total)\s+(of\s+)?(.+)$/i,
-		template: (m, table) =>
-			`SELECT SUM(${sanitizeColumn(m[3])}) as total FROM ${table}`,
+		template: (m, table) => `SELECT SUM(${sanitizeColumn(m[3])}) as total FROM ${table}`,
 		description: "Calculate sum",
 	},
 	{
 		pattern: /^(max|maximum|highest|largest)\s+(of\s+)?(.+)$/i,
-		template: (m, table) =>
-			`SELECT MAX(${sanitizeColumn(m[3])}) as maximum FROM ${table}`,
+		template: (m, table) => `SELECT MAX(${sanitizeColumn(m[3])}) as maximum FROM ${table}`,
 		description: "Find maximum",
 	},
 	{
 		pattern: /^(min|minimum|lowest|smallest)\s+(of\s+)?(.+)$/i,
-		template: (m, table) =>
-			`SELECT MIN(${sanitizeColumn(m[3])}) as minimum FROM ${table}`,
+		template: (m, table) => `SELECT MIN(${sanitizeColumn(m[3])}) as minimum FROM ${table}`,
 		description: "Find minimum",
 	},
 	{
@@ -115,14 +107,12 @@ const PATTERNS: NLPattern[] = [
 	},
 	{
 		pattern: /^(sort|order)\s+by\s+(.+)$/i,
-		template: (m, table) =>
-			`SELECT * FROM ${table} ORDER BY ${sanitizeColumn(m[2])}`,
+		template: (m, table) => `SELECT * FROM ${table} ORDER BY ${sanitizeColumn(m[2])}`,
 		description: "Sort by column",
 	},
 	{
 		pattern: /^(unique|distinct)\s+(.+)$/i,
-		template: (m, table) =>
-			`SELECT DISTINCT ${sanitizeColumn(m[2])} FROM ${table}`,
+		template: (m, table) => `SELECT DISTINCT ${sanitizeColumn(m[2])} FROM ${table}`,
 		description: "Get unique values",
 	},
 ];
@@ -183,10 +173,7 @@ function looksLikeSQL(query: string): boolean {
  * // result2.isNaturalLanguage === false
  * // result2.confidence === 1.0
  */
-export function translateToSQL(
-	query: string,
-	tableMetadata: TableMetadata,
-): TranslationResult {
+export function translateToSQL(query: string, tableMetadata: TableMetadata): TranslationResult {
 	const trimmedQuery = query.trim();
 
 	// If it already looks like SQL, return as-is

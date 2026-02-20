@@ -75,11 +75,7 @@ function isInteger(value: unknown): boolean {
  */
 function requiresBigInt(value: unknown): boolean {
 	const num = Number(value);
-	return (
-		!isNaN(num) &&
-		Number.isInteger(num) &&
-		(num > 2147483647 || num < -2147483648)
-	);
+	return !isNaN(num) && Number.isInteger(num) && (num > 2147483647 || num < -2147483648);
 }
 
 /**
@@ -275,11 +271,7 @@ export function validateSchema(
 ): { valid: boolean; errors: string[] } {
 	const errors: string[] = [];
 
-	for (
-		let rowIndex = 0;
-		rowIndex < data.length && errors.length < maxErrors;
-		rowIndex++
-	) {
+	for (let rowIndex = 0; rowIndex < data.length && errors.length < maxErrors; rowIndex++) {
 		const row = data[rowIndex];
 
 		for (
@@ -292,9 +284,7 @@ export function validateSchema(
 
 			// Check nullable constraint
 			if (!schema.nullable && isNullish(value)) {
-				errors.push(
-					`Row ${rowIndex + 1}, column "${schema.name}": NULL not allowed`,
-				);
+				errors.push(`Row ${rowIndex + 1}, column "${schema.name}": NULL not allowed`);
 				continue;
 			}
 

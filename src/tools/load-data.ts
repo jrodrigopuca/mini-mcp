@@ -15,11 +15,10 @@
 
 import { readFileSync } from "fs";
 import { basename, extname, resolve } from "path";
-
-import { getStore } from "../store/duckdb-store.js";
-import { validateFilePath } from "../security/validator.js";
-import { getParser } from "../parsers/parser-factory.js";
 import { getConfig } from "../config/loader.js";
+import { getParser } from "../parsers/parser-factory.js";
+import { validateFilePath } from "../security/validator.js";
+import { getStore } from "../store/duckdb-store.js";
 
 /**
  * Arguments for the load_data tool.
@@ -102,9 +101,7 @@ export async function loadData(args: LoadDataArgs): Promise<LoadDataResult> {
 	const parseResult = await parser.parse(content);
 
 	// 5. Generate table name
-	const name =
-		args.tableName ||
-		basename(absolutePath, ext).replace(/[^a-zA-Z0-9_]/g, "_");
+	const name = args.tableName || basename(absolutePath, ext).replace(/[^a-zA-Z0-9_]/g, "_");
 
 	// 6. Load into DuckDB
 	const tableMeta = await store.loadTable(

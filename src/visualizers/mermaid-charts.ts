@@ -51,11 +51,7 @@ interface ChartData {
 export function mermaidPieChart(data: ChartData, title?: string): string {
 	const { labels, values } = data;
 
-	const lines = [
-		"```mermaid",
-		"pie showData",
-		title ? `    title ${title}` : "",
-	].filter(Boolean);
+	const lines = ["```mermaid", "pie showData", title ? `    title ${title}` : ""].filter(Boolean);
 
 	labels.forEach((label, i) => {
 		// Escape quotes in labels
