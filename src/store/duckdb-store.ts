@@ -510,6 +510,15 @@ class DuckDBStore {
 	}
 
 	/**
+	 * Gets the metadata map for all loaded tables.
+	 *
+	 * @returns {Map<string, TableMetadata>} Map of table names to metadata
+	 */
+	getTableMetadata(): Map<string, TableMetadata> {
+		return this.tables;
+	}
+
+	/**
 	 * Closes the DuckDB connection and clears all loaded tables.
 	 *
 	 * @returns {Promise<void>}

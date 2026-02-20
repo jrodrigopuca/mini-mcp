@@ -95,42 +95,42 @@ export class CSVParser implements DataParser {
 		const delimiter = options.delimiter ?? this.detectDelimiter(strContent);
 		const hasHeaders = options.hasHeaders ?? true;
 
-		// Parse CSV using csv-parse
-		const records = parse(strContent, {
-			delimiter,
-			columns: hasHeaders,
-			skip_empty_lines: options.skipEmptyLines ?? true,
-			trim: true,
-			relax_column_count: true,
-			relax_quotes: true,
-		});
-
-		if (records.length === 0) {
-			return {
-				columns: [],
-				rows: [],
-				inferredTypes: {},
-			};
-		}
-
 		// Extract columns and rows
 		let columns: string[];
 		let rows: unknown[][];
 
 		if (hasHeaders) {
 			// When columns: true, records are objects
+			const records = parse(strContent, {
+				delimiter,
+				columns: true,
+				skip_empty_lines: options.skipEmptyLines ?? true,
+				trim: true,
+				relax_column_count: true,
+				relax_quotes: true,
+			}) as Record<string, unknown>[];
+
+			if (records.length === 0) {
+				return { columns: [], rows: [], inferredTypes: {} };
+			}
+
 			columns = Object.keys(records[0]);
-			rows = records.map((record: Record<string, unknown>) =>
-				columns.map((col) => record[col]),
-			);
+			rows = records.map((record) => columns.map((col) => record[col]));
 		} else {
 			// When columns: false, records are arrays
 			const rawRecords = parse(strContent, {
 				delimiter,
 				columns: false,
-				skip_empty_lines: true,
+				skip_empty_lines: options.skipEmptyLines ?? true,
 				trim: true,
-			});
+				relax_column_count: true,
+				relax_quotes: true,
+			}) as string[][];
+
+			if (rawRecords.length === 0) {
+				return { columns: [], rows: [], inferredTypes: {} };
+			}
+
 			columns = rawRecords[0].map((_: unknown, i: number) => `column_${i + 1}`);
 			rows = rawRecords;
 		}

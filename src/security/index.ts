@@ -20,3 +20,4 @@
 
 export * from "./validator.js";
 export * from "./constants.js";
+export * from "./path-validator.js";

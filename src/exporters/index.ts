@@ -14,5 +14,7 @@
 
 export * from "./csv-exporter.js";
 export * from "./json-exporter.js";
+export * from "./jsonl-exporter.js";
 export * from "./markdown-exporter.js";
 export * from "./exporter-factory.js";
+export * from "./file-writer.js";

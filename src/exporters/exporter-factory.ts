@@ -8,6 +8,7 @@
 import type { QueryResult, ExportFormat } from "../types/index.js";
 import { exportToCSV } from "./csv-exporter.js";
 import { exportToJSON } from "./json-exporter.js";
+import { exportToJSONL } from "./jsonl-exporter.js";
 import { exportToMarkdown } from "./markdown-exporter.js";
 
 /**
@@ -31,9 +32,20 @@ export function exportData(result: QueryResult, format: ExportFormat): string {
 			return exportToCSV(result);
 		case "json":
 			return exportToJSON(result);
+		case "jsonl":
+			return exportToJSONL(result);
 		case "markdown":
 			return exportToMarkdown(result);
 		default:
 			throw new Error(`Unknown export format: ${format}`);
 	}
+}
+
+/**
+ * Gets list of supported export formats.
+ *
+ * @returns {ExportFormat[]} Array of supported format names
+ */
+export function getSupportedExportFormats(): ExportFormat[] {
+	return ["csv", "json", "jsonl", "markdown"];
 }

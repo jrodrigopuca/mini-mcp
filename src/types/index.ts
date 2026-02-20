@@ -217,9 +217,9 @@ export type ChartFormat = "ascii" | "mermaid";
 
 /**
  * Supported data export formats.
- * @typedef {'csv' | 'json' | 'markdown'} ExportFormat
+ * @typedef {'csv' | 'json' | 'jsonl' | 'markdown'} ExportFormat
  */
-export type ExportFormat = "csv" | "json" | "markdown";
+export type ExportFormat = "csv" | "json" | "jsonl" | "markdown";
 
 // ============================================================================
 // Parser Interfaces
