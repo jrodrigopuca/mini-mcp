@@ -1,0 +1,23 @@
+{
+  "$schema": "./config-schema.json",
+  "security": {
+    "readOnly": true,
+    "allowedPaths": ["./data", "./"],
+    "allowNetworkPaths": false,
+    "maxFileSizeMB": 100
+  },
+  "limits": {
+    "maxRowsOutput": 1000,
+    "maxOutputChars": 50000,
+    "queryTimeoutMs": 30000,
+    "maxTablesLoaded": 10
+  },
+  "duckdb": {
+    "memoryLimitMB": 512,
+    "threads": 2
+  },
+  "output": {
+    "defaultFormat": "markdown",
+    "includeRowCount": true
+  }
+}
