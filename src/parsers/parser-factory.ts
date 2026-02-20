@@ -3,8 +3,6 @@
  * @module parsers/parser-factory
  * @description Factory module for selecting the appropriate parser
  * based on file extension. Provides a central registry of available parsers.
- *
- * @todo Implement in Phase 4
  */
 
 import type { DataParser } from "../types/index.js";
@@ -47,8 +45,8 @@ export function getParser(filePath: string): DataParser | null {
  * @returns {string[]} Array of supported extensions including the dot
  *
  * @example
- * getSupportedExtensions(); // ['.csv', '.tsv', '.json', '.parquet']
+ * getSupportedExtensions(); // ['.csv', '.tsv', '.json', '.jsonl']
  */
 export function getSupportedExtensions(): string[] {
-	return [".csv", ".tsv", ".json", ".parquet"];
+	return [".csv", ".tsv", ".json", ".jsonl"];
 }

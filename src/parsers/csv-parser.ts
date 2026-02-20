@@ -4,11 +4,23 @@
  * @description Parses CSV and TSV files into structured data.
  * Uses the csv-parse library for robust parsing with proper handling
  * of quotes, escapes, and edge cases.
- *
- * @todo Implement in Phase 4
  */
 
+import { parse } from "csv-parse/sync";
 import type { DataParser, ParsedData } from "../types/index.js";
+import { inferColumnTypes } from "../validators/schema-validator.js";
+
+/**
+ * Options for CSV parsing.
+ */
+interface CSVParseOptions {
+	/** Delimiter character (auto-detected if not provided) */
+	delimiter?: string;
+	/** Whether first row contains headers (default: true) */
+	hasHeaders?: boolean;
+	/** Skip empty lines (default: true) */
+	skipEmptyLines?: boolean;
+}
 
 /**
  * Parser for CSV and TSV files.
@@ -24,6 +36,8 @@ import type { DataParser, ParsedData } from "../types/index.js";
  * }
  */
 export class CSVParser implements DataParser {
+	private filePath: string = "";
+
 	/**
 	 * Checks if this parser can handle the given file.
 	 *
@@ -31,21 +45,107 @@ export class CSVParser implements DataParser {
 	 * @returns {boolean} True if file is CSV or TSV
 	 */
 	canParse(filePath: string): boolean {
+		this.filePath = filePath;
 		const ext = filePath.toLowerCase();
 		return ext.endsWith(".csv") || ext.endsWith(".tsv");
 	}
 
 	/**
+	 * Detects the delimiter used in CSV content.
+	 * Checks for common delimiters: comma, semicolon, tab, pipe.
+	 *
+	 * @param {string} content - First few lines of the CSV
+	 * @returns {string} Detected delimiter
+	 */
+	private detectDelimiter(content: string): string {
+		const firstLine = content.split("\n")[0] || "";
+		const delimiters = [",", ";", "\t", "|"];
+		const counts = delimiters.map((d) => ({
+			delimiter: d,
+			count: (firstLine.match(new RegExp(`\\${d}`, "g")) || []).length,
+		}));
+
+		// TSV files default to tab
+		if (this.filePath.toLowerCase().endsWith(".tsv")) {
+			return "\t";
+		}
+
+		// Return the delimiter with the highest count
+		counts.sort((a, b) => b.count - a.count);
+		return counts[0].count > 0 ? counts[0].delimiter : ",";
+	}
+
+	/**
 	 * Parses CSV/TSV content into structured data.
 	 *
-	 * @param {string | Buffer} _content - Raw file content
+	 * @param {string | Buffer} content - Raw file content
+	 * @param {CSVParseOptions} options - Parsing options
 	 * @returns {Promise<ParsedData>} Parsed data with columns, rows, and inferred types
-	 * @throws {Error} Not implemented yet
-	 *
-	 * @todo Implement with csv-parse in Phase 4
+	 * @throws {Error} If parsing fails
 	 */
-	async parse(_content: string | Buffer): Promise<ParsedData> {
-		// TODO: Implement CSV parsing with csv-parse
-		throw new Error("Not implemented yet - Phase 4");
+	async parse(
+		content: string | Buffer,
+		options: CSVParseOptions = {},
+	): Promise<ParsedData> {
+		const strContent: string = Buffer.isBuffer(content)
+			? content.toString("utf-8")
+			: content;
+
+		// Detect delimiter if not provided
+		const delimiter = options.delimiter ?? this.detectDelimiter(strContent);
+		const hasHeaders = options.hasHeaders ?? true;
+
+		// Parse CSV using csv-parse
+		const records = parse(strContent, {
+			delimiter,
+			columns: hasHeaders,
+			skip_empty_lines: options.skipEmptyLines ?? true,
+			trim: true,
+			relax_column_count: true,
+			relax_quotes: true,
+		});
+
+		if (records.length === 0) {
+			return {
+				columns: [],
+				rows: [],
+				inferredTypes: {},
+			};
+		}
+
+		// Extract columns and rows
+		let columns: string[];
+		let rows: unknown[][];
+
+		if (hasHeaders) {
+			// When columns: true, records are objects
+			columns = Object.keys(records[0]);
+			rows = records.map((record: Record<string, unknown>) =>
+				columns.map((col) => record[col]),
+			);
+		} else {
+			// When columns: false, records are arrays
+			const rawRecords = parse(strContent, {
+				delimiter,
+				columns: false,
+				skip_empty_lines: true,
+				trim: true,
+			});
+			columns = rawRecords[0].map((_: unknown, i: number) => `column_${i + 1}`);
+			rows = rawRecords;
+		}
+
+		// Infer types for each column
+		const columnInfo = inferColumnTypes(columns, rows);
+		const inferredTypes: Record<string, string> = {};
+		for (const col of columnInfo) {
+			inferredTypes[col.name] = col.type;
+		}
+
+		return {
+			columns,
+			rows,
+			inferredTypes,
+		};
 	}
 }
