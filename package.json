@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "MCP server for natural language CSV/data analysis with DuckDB",
   "main": "dist/index.js",
+  "bin": {
+    "mini-mcp": "dist/index.js"
+  },
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -31,18 +34,18 @@
   "dependencies": {
     "@duckdb/node-api": "^1.4.4-r.1",
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "csv-parse": "^5.5.0",
-    "zod": "^3.22.0"
+    "csv-parse": "^6.1.0",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
-    "@typescript-eslint/eslint-plugin": "^6.13.0",
-    "@typescript-eslint/parser": "^6.13.0",
-    "eslint": "^8.55.0",
-    "typescript": "^5.3.0",
-    "vitest": "^1.0.0"
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^22.13.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.21.0",
+    "vitest": "^3.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.19.0"
   }
 }
