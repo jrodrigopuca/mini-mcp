@@ -1,21 +1,61 @@
 # Mini-MCP
 
-A natural language CSV/data analysis MCP server powered by DuckDB.
+A Model Context Protocol (MCP) server for natural language data analysis powered by DuckDB.
+
+[![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)]()
+[![Vulnerabilities](https://img.shields.io/badge/vulnerabilities-0-brightgreen)]()
+[![Node](https://img.shields.io/badge/node-%3E%3D20.19.0-blue)]()
 
 ## Features
 
-- **Load data files**: CSV, TSV, JSON, JSONL formats
-- **SQL queries**: Full DuckDB SQL support
+- **Multi-format data loading**: CSV, TSV, JSON, JSONL, Parquet
+- **Full SQL support**: DuckDB analytical queries with JOINs, window functions, CTEs
 - **Natural language queries**: Ask questions in plain English
-- **Data visualization**: ASCII and Mermaid charts
-- **Export data**: Multiple output formats
-- **Security**: Configurable path restrictions and read-only mode
+- **Data visualization**: ASCII and Mermaid charts (bar, pie, line)
+- **Multiple export formats**: CSV, JSON, JSONL, Markdown
+- **Security first**: Configurable path restrictions, read-only mode, query validation
 
-## Installation
+## Quick Start
 
 ```bash
+# Install dependencies
 npm install
+
+# Build
 npm run build
+
+# Run tests
+npm test
+```
+
+## Usage Example
+
+Once configured with Claude Desktop or VS Code, you can interact naturally:
+
+```
+You: "Load sales.csv and show me the top 10 products by revenue"
+
+Claude: I'll load the file and analyze it.
+
+[Calls load_data with filePath: "./sales.csv"]
+✓ Table 'sales' created: 1500 rows, 8 columns
+
+[Calls query_data with query: "SELECT product, SUM(revenue) as total
+FROM sales GROUP BY product ORDER BY total DESC LIMIT 10"]
+
+| product     | total     |
+|-------------|-----------|
+| Widget Pro  | 45,230.00 |
+| Gadget X    | 38,120.00 |
+...
+
+You: "Now show that as a bar chart"
+
+[Calls visualize_data with chartType: "bar"]
+
+Widget Pro │ ████████████████████████████████████████ 45230
+  Gadget X │ ████████████████████████████████ 38120
+ Device Y  │ ██████████████████████████████ 35890
 ```
 
 ## Claude Desktop Configuration
@@ -144,6 +184,32 @@ visualize_data({
 - **🔴 Hardcoded**: Always enforced (dangerous SQL blocked, system paths blocked)
 - **🟡 Configurable**: Can be adjusted via config (allowedPaths, readOnly, maxFileSizeMB)
 - **🟢 Flexible**: User-controllable limits (maxRowsOutput, maxTablesLoaded)
+
+## Documentation
+
+- **[Architecture](docs/ARCHITECTURE.md)** - System design and component interactions
+- **[API Reference](docs/API.md)** - Complete tool documentation
+- **[Configuration](docs/CONFIGURATION.md)** - All configuration options
+
+## Project Structure
+
+```
+mini-mcp/
+├── src/
+│   ├── index.ts          # MCP server entry point
+│   ├── config/           # Configuration loading & validation
+│   ├── security/         # Path & query validation
+│   ├── store/            # DuckDB store (singleton)
+│   ├── parsers/          # CSV, JSON, Parquet parsers
+│   ├── exporters/        # CSV, JSON, JSONL, Markdown exporters
+│   ├── tools/            # MCP tool implementations
+│   ├── nlp/              # Natural language → SQL
+│   ├── validators/       # Schema inference & validation
+│   └── types/            # TypeScript interfaces
+├── tests/                # Vitest unit tests
+├── docs/                 # Documentation
+└── dist/                 # Compiled JavaScript
+```
 
 ## License
 
