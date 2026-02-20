@@ -15,7 +15,13 @@
     "type": "git",
     "url": "git+https://jrodrigopuca@github.com/jrodrigopuca/mini-mcp.git"
   },
-  "keywords": ["mcp", "csv", "duckdb", "data-analysis", "natural-language"],
+  "keywords": [
+    "mcp",
+    "csv",
+    "duckdb",
+    "data-analysis",
+    "natural-language"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -23,18 +29,18 @@
   },
   "homepage": "https://github.com/jrodrigopuca/mini-mcp#readme",
   "dependencies": {
+    "@duckdb/node-api": "^1.4.4-r.1",
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "duckdb": "^1.1.0",
     "csv-parse": "^5.5.0",
     "zod": "^3.22.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
-    "typescript": "^5.3.0",
-    "vitest": "^1.0.0",
-    "eslint": "^8.55.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
-    "@typescript-eslint/parser": "^6.13.0"
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
