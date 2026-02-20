@@ -44,9 +44,13 @@ export class ParquetParser implements DataParser {
 	 * @returns {Promise<ParsedData>} Parsed data with columns, rows, and inferred types
 	 * @throws {Error} If parsing fails
 	 */
-	async parse(content: string | Buffer, options?: { filePath?: string }): Promise<ParsedData> {
+	async parse(
+		content: string | Buffer,
+		options?: { filePath?: string },
+	): Promise<ParsedData> {
 		// For Parquet, the content should be a file path
-		const filePath = options?.filePath ?? (Buffer.isBuffer(content) ? "" : content);
+		const filePath =
+			options?.filePath ?? (Buffer.isBuffer(content) ? "" : content);
 
 		if (!filePath || filePath.length === 0) {
 			throw new Error(
@@ -117,7 +121,11 @@ export class ParquetParser implements DataParser {
 
 		if (upperType.includes("INT")) return "INTEGER";
 		if (upperType.includes("BIGINT")) return "BIGINT";
-		if (upperType.includes("DOUBLE") || upperType.includes("FLOAT") || upperType.includes("REAL")) {
+		if (
+			upperType.includes("DOUBLE") ||
+			upperType.includes("FLOAT") ||
+			upperType.includes("REAL")
+		) {
 			return "DOUBLE";
 		}
 		if (upperType.includes("BOOL")) return "BOOLEAN";

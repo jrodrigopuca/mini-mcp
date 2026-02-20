@@ -13,7 +13,13 @@ import { ParquetParser } from "./parquet-parser.js";
 /**
  * Supported file format types.
  */
-export type FileFormat = "csv" | "tsv" | "json" | "jsonl" | "parquet" | "unknown";
+export type FileFormat =
+	| "csv"
+	| "tsv"
+	| "json"
+	| "jsonl"
+	| "parquet"
+	| "unknown";
 
 /**
  * Registry of available parsers.
@@ -21,7 +27,11 @@ export type FileFormat = "csv" | "tsv" | "json" | "jsonl" | "parquet" | "unknown
  *
  * @constant {DataParser[]}
  */
-const parsers: DataParser[] = [new CSVParser(), new JSONParser(), new ParquetParser()];
+const parsers: DataParser[] = [
+	new CSVParser(),
+	new JSONParser(),
+	new ParquetParser(),
+];
 
 /**
  * Detects file format from extension.
