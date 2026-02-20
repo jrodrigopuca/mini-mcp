@@ -7,6 +7,8 @@
  * Supported Charts:
  * - Bar chart: Categorical comparisons
  * - Pie chart: Part-of-whole relationships
+ * - Line chart: Time series and trends
+ * - Auto: Automatically selects best chart type
  *
  * Output Formats:
  * - ASCII: Text-based charts for terminal
@@ -22,14 +24,14 @@ import type { ChartFormat, ChartType } from "../types/index.js";
  *
  * @interface VisualizeDataArgs
  * @property {string} source - Table name or SQL query for data
- * @property {ChartType} chartType - Type of chart ('bar', 'pie')
+ * @property {ChartType | 'auto'} chartType - Type of chart ('bar', 'pie', 'line', 'auto')
  * @property {ChartFormat} [format='ascii'] - Output format ('ascii', 'mermaid')
  * @property {string} [labelColumn] - Column to use for labels (default: first column)
  * @property {string} [valueColumn] - Column to use for values (default: second column)
  */
 export interface VisualizeDataArgs {
 	source: string;
-	chartType: ChartType;
+	chartType: ChartType | "auto";
 	format?: ChartFormat;
 	labelColumn?: string;
 	valueColumn?: string;
@@ -62,7 +64,11 @@ function isSQLQuery(source: string): boolean {
 /**
  * Renders an ASCII horizontal bar chart.
  */
-function renderASCIIBar(labels: string[], values: number[], title?: string): string {
+function renderASCIIBar(
+	labels: string[],
+	values: number[],
+	title?: string,
+): string {
 	const maxValue = Math.max(...values);
 	const maxLabelLen = Math.max(...labels.map((l) => String(l).length));
 	const barWidth = 40;
@@ -106,7 +112,11 @@ function renderASCIIPie(labels: string[], values: number[]): string {
 /**
  * Renders a Mermaid pie chart.
  */
-function renderMermaidPie(labels: string[], values: number[], title?: string): string {
+function renderMermaidPie(
+	labels: string[],
+	values: number[],
+	title?: string,
+): string {
 	const lines: string[] = ["```mermaid"];
 	lines.push("pie showData");
 	if (title) lines.push(`    title ${title}`);
@@ -122,7 +132,11 @@ function renderMermaidPie(labels: string[], values: number[], title?: string): s
 /**
  * Renders a Mermaid bar chart.
  */
-function renderMermaidBar(labels: string[], values: number[], title?: string): string {
+function renderMermaidBar(
+	labels: string[],
+	values: number[],
+	title?: string,
+): string {
 	const lines: string[] = ["```mermaid"];
 	lines.push("xychart-beta horizontal");
 	if (title) lines.push(`    title "${title}"`);
@@ -130,6 +144,112 @@ function renderMermaidBar(labels: string[], values: number[], title?: string): s
 	lines.push(`    bar [${values.join(", ")}]`);
 	lines.push("```");
 	return lines.join("\n");
+}
+
+/**
+ * Renders an ASCII line chart (simple text representation).
+ */
+function renderASCIILine(
+	labels: string[],
+	values: number[],
+	title?: string,
+): string {
+	const height = 10;
+	const maxValue = Math.max(...values);
+	const minValue = Math.min(...values);
+	const range = maxValue - minValue || 1;
+
+	const lines: string[] = [];
+	if (title) lines.push(`${title}\n`);
+
+	// Create grid
+	const grid: string[][] = [];
+	for (let i = 0; i < height; i++) {
+		grid.push(new Array(values.length).fill(" "));
+	}
+
+	// Plot points
+	for (let i = 0; i < values.length; i++) {
+		const normalized = (values[i] - minValue) / range;
+		const y = height - 1 - Math.round(normalized * (height - 1));
+		grid[y][i] = "●";
+
+		// Draw line to next point
+		if (i < values.length - 1) {
+			const nextNormalized = (values[i + 1] - minValue) / range;
+			const nextY = height - 1 - Math.round(nextNormalized * (height - 1));
+			if (nextY !== y) {
+				const step = nextY > y ? 1 : -1;
+				for (let yi = y + step; yi !== nextY; yi += step) {
+					if (grid[yi][i] === " ") grid[yi][i] = "│";
+				}
+			}
+		}
+	}
+
+	// Render grid with y-axis
+	const maxLabel = maxValue.toFixed(0);
+	const minLabel = minValue.toFixed(0);
+	const padLen = Math.max(maxLabel.length, minLabel.length);
+
+	for (let i = 0; i < height; i++) {
+		let yLabel = "";
+		if (i === 0) yLabel = maxLabel.padStart(padLen);
+		else if (i === height - 1) yLabel = minLabel.padStart(padLen);
+		else yLabel = " ".repeat(padLen);
+		lines.push(`${yLabel} │${grid[i].join("")}`);
+	}
+
+	// X-axis
+	lines.push(" ".repeat(padLen) + " └" + "─".repeat(values.length));
+
+	// Labels (abbreviated)
+	const labelLine = labels.map((l) => String(l).charAt(0)).join("");
+	lines.push(" ".repeat(padLen + 2) + labelLine);
+
+	return lines.join("\n");
+}
+
+/**
+ * Renders a Mermaid line chart.
+ */
+function renderMermaidLine(
+	labels: string[],
+	values: number[],
+	title?: string,
+): string {
+	const lines: string[] = ["```mermaid"];
+	lines.push("xychart-beta");
+	if (title) lines.push(`    title "${title}"`);
+	lines.push(`    x-axis [${labels.map((l) => `"${l}"`).join(", ")}]`);
+	lines.push(`    line [${values.join(", ")}]`);
+	lines.push("```");
+	return lines.join("\n");
+}
+
+/**
+ * Auto-selects the best chart type based on data characteristics.
+ */
+function autoSelectChartType(labels: string[], values: number[]): ChartType {
+	// Check for time series patterns (dates, months, years, sequential)
+	const timePatterns =
+		/^(\d{4}|\d{1,2}\/\d{1,2}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|q[1-4]|week|day|month)/i;
+	const isTimeSeries = labels.some((l) => timePatterns.test(String(l)));
+
+	if (isTimeSeries || labels.length > 8) {
+		return "line";
+	}
+
+	// Check for part-of-whole (values sum to ~100 or percentages)
+	const total = values.reduce((a, b) => a + b, 0);
+	const isPctLike = total >= 99 && total <= 101;
+	const hasSmallSet = labels.length <= 6;
+
+	if (isPctLike || (hasSmallSet && labels.length >= 2)) {
+		return "pie";
+	}
+
+	return "bar";
 }
 
 /**
@@ -154,7 +274,9 @@ function renderMermaidBar(labels: string[], values: number[], title?: string): s
  *   format: 'mermaid'
  * });
  */
-export async function visualizeData(args: VisualizeDataArgs): Promise<VisualizeDataResult> {
+export async function visualizeData(
+	args: VisualizeDataArgs,
+): Promise<VisualizeDataResult> {
 	const { source, chartType, labelColumn, valueColumn } = args;
 	const format = args.format || "ascii";
 	const store = getStore();
@@ -182,7 +304,9 @@ export async function visualizeData(args: VisualizeDataArgs): Promise<VisualizeD
 
 	// Need at least 2 columns (label and value)
 	if (result.columns.length < 2) {
-		throw new Error("Visualization requires at least 2 columns (label and value)");
+		throw new Error(
+			"Visualization requires at least 2 columns (label and value)",
+		);
 	}
 
 	// Determine which columns to use
@@ -202,23 +326,50 @@ export async function visualizeData(args: VisualizeDataArgs): Promise<VisualizeD
 
 	// Check for valid numeric values
 	if (values.some((v) => isNaN(v))) {
-		throw new Error(`Value column '${result.columns[valueIdx]}' must contain numeric data`);
+		throw new Error(
+			`Value column '${result.columns[valueIdx]}' must contain numeric data`,
+		);
 	}
+
+	// Auto-select chart type if requested
+	const finalChartType =
+		chartType === "auto" ? autoSelectChartType(labels, values) : chartType;
 
 	// Generate chart
 	let chart: string;
 
 	if (format === "ascii") {
-		chart = chartType === "bar" ? renderASCIIBar(labels, values) : renderASCIIPie(labels, values);
+		switch (finalChartType) {
+			case "bar":
+				chart = renderASCIIBar(labels, values);
+				break;
+			case "line":
+				chart = renderASCIILine(labels, values);
+				break;
+			case "pie":
+			default:
+				chart = renderASCIIPie(labels, values);
+				break;
+		}
 	} else {
-		chart =
-			chartType === "bar" ? renderMermaidBar(labels, values) : renderMermaidPie(labels, values);
+		switch (finalChartType) {
+			case "bar":
+				chart = renderMermaidBar(labels, values);
+				break;
+			case "line":
+				chart = renderMermaidLine(labels, values);
+				break;
+			case "pie":
+			default:
+				chart = renderMermaidPie(labels, values);
+				break;
+		}
 	}
 
 	return {
 		success: true,
 		chart,
-		chartType,
+		chartType: finalChartType,
 		format,
 	};
 }

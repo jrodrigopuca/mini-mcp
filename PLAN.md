@@ -809,13 +809,13 @@ class QueryBuilder {
 
 ### Fase 8: Sistema de Visualización ✅
 
-**Tiempo estimado: 2-3 horas** | **Estado: COMPLETADO (básico)**
+**Tiempo estimado: 2-3 horas** | **Estado: COMPLETADO**
 
 - [x] Crear interface `DataVisualizer` (integrado en `visualize-data.ts`)
-- [x] Implementar `ASCIICharts` (barras horizontales, distribución)
-- [x] Implementar `MermaidCharts` (pie, bar)
-- [ ] Auto-seleccionar tipo de gráfico según datos (pendiente)
-- [ ] Line charts (pendiente)
+- [x] Implementar `ASCIICharts` (barras horizontales, distribución, líneas)
+- [x] Implementar `MermaidCharts` (pie, bar, line)
+- [x] Auto-seleccionar tipo de gráfico según datos
+- [x] Line charts para series temporales
 
 ```typescript
 // src/visualizers/base-visualizer.ts
@@ -1414,19 +1414,26 @@ node dist/index.js
 
 ## 📊 Resumen de Progreso
 
-| Fase | Descripción              | Estado                 |
-| ---- | ------------------------ | ---------------------- |
-| 1    | Configuración Base       | ✅ Completado          |
-| 2    | Sistema de Configuración | ✅ Completado          |
-| 3    | DataStore DuckDB         | ✅ Completado          |
-| 4    | Parsers + Validación     | ✅ Completado          |
-| 5    | Sistema de Exporters     | ✅ Completado          |
-| 6    | Tools MCP                | ✅ Completado          |
-| 7    | Traductor NL → SQL       | ✅ Completado (básico) |
-| 8    | Visualización            | ✅ Completado (básico) |
-| 9    | Testing y Docs           | 🔄 En progreso         |
+| Fase | Descripción              | Estado        |
+| ---- | ------------------------ | ------------- |
+| 1    | Configuración Base       | ✅ Completado |
+| 2    | Sistema de Configuración | ✅ Completado |
+| 3    | DataStore DuckDB         | ✅ Completado |
+| 4    | Parsers + Validación     | ✅ Completado |
+| 5    | Sistema de Exporters     | ✅ Completado |
+| 6    | Tools MCP                | ✅ Completado |
+| 7    | Traductor NL → SQL       | ✅ Completado |
+| 8    | Visualización            | ✅ Completado |
+| 9    | Testing y Docs           | ✅ Completado |
 
-**Progreso total: ~90% completado**
+**Progreso total: 100% completado** 🎉
+
+**Estadísticas:**
+
+- 62 tests pasando (vitest)
+- 0 vulnerabilidades (npm audit)
+- Soporte: CSV, TSV, JSON, JSONL, Parquet
+- 6 herramientas MCP funcionales
 
 ```
 
